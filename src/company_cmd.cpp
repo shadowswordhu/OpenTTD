@@ -36,6 +36,7 @@
 #include "game/game.hpp"
 #include "goal_base.h"
 #include "story_base.h"
+#include "departures.h"
 
 #include "table/strings.h"
 
@@ -1098,6 +1099,8 @@ CommandCost CmdRenameCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 		c->name = reset ? NULL : stredup(text);
 		MarkWholeScreenDirty();
 		CompanyAdminUpdate(c);
+                InvalidateWindowClassesData(WC_DEPARTURES, DIWD_COMPANY_NAME_CHANGED);
+                InvalidateWindowClassesData(WC_ARRIVALS, DIWD_COMPANY_NAME_CHANGED);
 	}
 
 	return CommandCost();

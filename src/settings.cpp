@@ -64,6 +64,8 @@
 #include "roadveh.h"
 #include "fios.h"
 #include "strings_func.h"
+#include "departures.h"
+#include "statusbar_gui.h"
 
 #include "void_map.h"
 #include "station_base.h"
@@ -1062,6 +1064,22 @@ static bool InvalidateVehTimetableWindow(int32 p1)
 {
 	InvalidateWindowClassesData(WC_VEHICLE_TIMETABLE, VIWD_MODIFY_ORDERS);
 	return true;
+}
+
+static bool InvalidateDeparturesWindow(int32 p1)
+{
+        InvalidateWindowClassesData(WC_DEPARTURES, DIWD_DEPARTURES_FONT_CHANGED);
+        InvalidateWindowClassesData(WC_ARRIVALS, DIWD_DEPARTURES_FONT_CHANGED);
+        return true;
+}
+
+static bool InvalidateVehTimetableWindowAndStatusBarDate(int32 p1)
+{
+        InvalidateWindowClassesData(WC_VEHICLE_TIMETABLE, VIWD_MODIFY_ORDERS);
+        InvalidateWindowData(WC_STATUS_BAR, 0, SBI_CLOCK_TOGGLED);
+        InvalidateWindowClassesData(WC_DEPARTURES, DIWD_CLOCK_TOGGLED);
+        InvalidateWindowClassesData(WC_ARRIVALS, DIWD_CLOCK_TOGGLED);
+        return true;
 }
 
 static bool ZoomMinMaxChanged(int32 p1)

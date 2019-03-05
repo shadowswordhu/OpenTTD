@@ -338,6 +338,18 @@ enum WindowClass {
 	 *   - #StationID = #StationViewWidgets
 	 */
 	WC_STATION_VIEW,
+	
+	/**
+	 * Departures view; %Window numbers:
+	 *   - #StationID = #DeparturesWidgets
+	 */
+	WC_DEPARTURES,
+
+	/**
+	 * Arrivals view; %Window numbers:
+	 *   - #StationID = #DeparturesWidgets
+	 */
+	WC_ARRIVALS,
 
 	/**
 	 * Depot view; %Window numbers:

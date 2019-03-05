@@ -23,6 +23,7 @@ extern uint16 _tick_counter;
 void SetDate(Date date, DateFract fract);
 void ConvertDateToYMD(Date date, YearMonthDay *ymd);
 Date ConvertYMDToDate(Year year, Month month, Day day);
+void ConvertDateToClock(Date date, HourMinute *clock);
 
 /**
  * Checks whether the given year is a leap year or not.

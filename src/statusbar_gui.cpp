@@ -116,7 +116,7 @@ struct StatusBarWindow : Window {
 		switch (widget) {
 			case WID_S_LEFT:
 				SetDParamMaxValue(0, MAX_YEAR * DAYS_IN_YEAR);
-				d = GetStringBoundingBox(STR_WHITE_DATE_LONG);
+                                d = GetStringBoundingBox(STR_WHITE_DATE_OR_CLOCK);
 				break;
 
 			case WID_S_RIGHT: {
@@ -143,7 +143,7 @@ struct StatusBarWindow : Window {
 			case WID_S_LEFT:
 				/* Draw the date */
 				SetDParam(0, _date);
-				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, STR_WHITE_DATE_LONG, TC_FROMSTRING, SA_HOR_CENTER);
+                                DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, STR_WHITE_DATE_OR_CLOCK, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 
 			case WID_S_RIGHT: {
@@ -208,6 +208,8 @@ struct StatusBarWindow : Window {
 				this->ticker_scroll    =   TICKER_STOP; // reset ticker ...
 				this->reminder_timeout.SetInterval(REMINDER_STOP); // ... and reminder
 				break;
+                        case SBI_CLOCK_TOGGLED:
+                                break;
 		}
 	}
 

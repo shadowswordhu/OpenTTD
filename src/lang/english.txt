@@ -1413,6 +1413,10 @@ STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Show timetable 
 STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :Show travel times in time tables in game ticks instead of days
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Show arrival and departure in timetables: {STRING2}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Display anticipated arrival and departure times in timetables
+STR_CONFIG_SETTING_LARGER_DEPARTURES_FONT                       :Show arrival and departure station lists using a larger font: {STRING2}
+STR_CONFIG_SETTING_LARGER_DEPARTURES_FONT_HELPTEXT              :Select whether arrival and departure station lists will be displayed using a larger font
+STR_CONFIG_SETTING_USE_CLOCK                                    :Use 24-hour clock for timetables: {STRING2}
+STR_CONFIG_SETTING_USE_CLOCK_HELPTEXT                           :Timetable vehicles using a virtual 24-hour clock
 STR_CONFIG_SETTING_QUICKGOTO                                    :Quick creation of vehicle orders: {STRING2}
 STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :Pre-select the 'goto cursor' when opening the orders window
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :Default rail type (after new game/game load): {STRING2}
@@ -3200,6 +3204,12 @@ STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Show sta
 STR_STATION_VIEW_SUPPLY_RATINGS_TITLE                           :{BLACK}Monthly supply and local rating:
 STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}: {YELLOW}{COMMA} / {STRING} ({COMMA}%)
 
+STR_STATION_VIEW_DEPARTURES_BUTTON                              :{BLACK}Departures
+STR_STATION_VIEW_DEPARTURES_TOOLTIP                             :{BLACK}Show station departures
+
+STR_STATION_VIEW_ARRIVALS_BUTTON                                :{BLACK}Arrivals
+STR_STATION_VIEW_ARRIVALS_TOOLTIP                               :{BLACK}Show station arrivals
+
 STR_STATION_VIEW_GROUP                                          :{BLACK}Group by
 STR_STATION_VIEW_WAITING_STATION                                :Station: Waiting
 STR_STATION_VIEW_WAITING_AMOUNT                                 :Amount: Waiting
@@ -3246,6 +3256,86 @@ STR_STATION_VIEW_RENAME_STATION_CAPTION                         :Rename station/
 
 STR_STATION_VIEW_CLOSE_AIRPORT                                  :{BLACK}Close airport
 STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Prevent aircraft from landing on this airport
+
+# Departures window
+STR_DEPARTURES_CAPTION                                          :{WHITE}{STATION} Live Departures
+STR_DEPARTURES_WAYPOINT_CAPTION                                 :{WHITE}{WAYPOINT} Live Departures
+STR_DEPARTURES_EMPTY                                            :{ORANGE}No vehicles are currently timetabled for this station.
+STR_DEPARTURES_NONE_SELECTED                                    :{ORANGE}No timetable information has been requested.
+STR_DEPARTURES_WAYPOINT_EMPTY                                   :{ORANGE}No vehicles are currently timetabled for this waypoint.
+STR_DEPARTURES_DEPARTURE_DATE                                   :{ORANGE}{DATE_TINY_OR_CLOCK}
+STR_DEPARTURES_ARRIVAL_AND_DEPARTURE_DATES                      :{RED}{DOWN_ARROW}{ORANGE}{DATE_TINY_OR_CLOCK} {GREEN}{UP_ARROW}{ORANGE}{DATE_TINY_OR_CLOCK}
+STR_DEPARTURES_DESTINATION                                      :{ORANGE}{STATION}{STRING}
+STR_DEPARTURES_DESTINATION_VIA                                  :{ORANGE}{STATION}{STRING} via
+STR_DEPARTURES_DESTINATION_VIA_STATION                          :{ORANGE}{STATION}{STRING} via {STATION}{STRING}
+STR_DEPARTURES_VIA_STATION                                      :{ORANGE}via {STATION}{STRING}
+
+STR_DEPARTURES_STATION_TRAIN                                    : {TRAIN}
+STR_DEPARTURES_STATION_SHIP                                     : {SHIP}
+STR_DEPARTURES_STATION_PLANE                                    : {PLANE}
+
+STR_DEPARTURES_ON_TIME                                          :{GREEN}On time
+STR_DEPARTURES_ARRIVED                                          :{GREEN}Arrived
+STR_DEPARTURES_DELAYED                                          :{YELLOW}Delayed
+STR_DEPARTURES_EXPECTED                                         :{YELLOW}Expt {DATE_TINY_OR_CLOCK}
+STR_DEPARTURES_CANCELLED                                        :{RED}Cancelled
+
+STR_DEPARTURES_CALLING_AT                                       :{TINY_FONT}{ORANGE}Calling at:
+STR_DEPARTURES_CALLING_AT_LARGE                                 :{ORANGE}Calling at:
+STR_DEPARTURES_CALLING_AT_FIRST_STATION                         :{STATION}
+STR_DEPARTURES_CALLING_AT_STATION                               :{RAW_STRING}, {STATION}
+STR_DEPARTURES_CALLING_AT_LAST_STATION                          :{RAW_STRING} and {STATION}
+STR_DEPARTURES_CALLING_AT_CONTINUES                             :{RAW_STRING}. This service continues to {RAW_STRING}
+STR_DEPARTURES_CALLING_AT_LIST                                  :{TINY_FONT}{ORANGE}{RAW_STRING}.
+STR_DEPARTURES_CALLING_AT_LIST_LARGE                            :{ORANGE}{RAW_STRING}.
+
+STR_DEPARTURES_ICON_TRAIN                                       :{SILVER}{TRAIN}
+STR_DEPARTURES_ICON_BUS                                         :{SILVER}{BUS}
+STR_DEPARTURES_ICON_LORRY                                       :{SILVER}{LORRY}
+STR_DEPARTURES_ICON_SHIP                                        :{SILVER}{SHIP}
+STR_DEPARTURES_ICON_PLANE                                       :{SILVER}{PLANE}
+
+STR_DEPARTURES_ARRIVAL_TIME_BUTTON                              :{BLACK}Arrival
+
+STR_DEPARTURES_ARRIVAL_TIME_TOOLTIP                             :{BLACK}Show arrival times
+
+STR_DEPARTURES_SHOW_TRAINS_BUTTON                               :{BLACK}{TRAIN}
+STR_DEPARTURES_SHOW_BUSES_BUTTON                                :{BLACK}{BUS}
+STR_DEPARTURES_SHOW_LORRIES_BUTTON                              :{BLACK}{LORRY}
+STR_DEPARTURES_SHOW_SHIPS_BUTTON                                :{BLACK}{SHIP}
+STR_DEPARTURES_SHOW_AIRCRAFT_BUTTON                             :{BLACK}{PLANE}
+
+STR_DEPARTURES_SHOW_TRAINS_TOOLTIP                              :{BLACK}Show departures for trains
+STR_DEPARTURES_SHOW_BUSES_TOOLTIP                               :{BLACK}Show departures for buses
+STR_DEPARTURES_SHOW_LORRIES_TOOLTIP                             :{BLACK}Show departures for lorries
+STR_DEPARTURES_SHOW_AIRCRAFT_TOOLTIP                            :{BLACK}Show departures for aircraft
+STR_DEPARTURES_SHOW_SHIPS_TOOLTIP                               :{BLACK}Show departures for ships
+
+STR_DEPARTURES_VEHICLES_BUTTON                                  :{BLACK}Vehicle
+STR_DEPARTURES_GROUPS_BUTTON                                    :{BLACK}Group
+STR_DEPARTURES_COMPANIES_BUTTON                                 :{BLACK}Company
+
+STR_DEPARTURES_VEHICLES_TOOLTIP                                 :{BLACK}Show departure vehicle names
+STR_DEPARTURES_GROUPS_TOOLTIP                                   :{BLACK}Show departure vehicle groups
+STR_DEPARTURES_COMPANIES_TOOLTIP                                :{BLACK}Show departure companies
+
+STR_DEPARTURES_VEHICLE                                          :{LTBLUE}{VEHICLE}
+STR_DEPARTURES_GROUP                                            :{BLUE}{GROUP}
+STR_DEPARTURES_COMPANY                                          :{PURPLE}{COMPANY}
+
+# Arrivals window
+STR_ARRIVALS_CAPTION                                            :{WHITE}{STATION} Live Arrivals
+STR_ARRIVALS_WAYPOINT_CAPTION                                   :{WHITE}{WAYPOINT} Live Arrivals
+
+STR_ARRIVALS_SHOW_TRAINS_TOOLTIP                                :{BLACK}Show arrivals for trains
+STR_ARRIVALS_SHOW_BUSES_TOOLTIP                                 :{BLACK}Show arrivals for buses
+STR_ARRIVALS_SHOW_LORRIES_TOOLTIP                               :{BLACK}Show arrivals for lorries
+STR_ARRIVALS_SHOW_AIRCRAFT_TOOLTIP                              :{BLACK}Show arrivals for aircraft
+STR_ARRIVALS_SHOW_SHIPS_TOOLTIP                                 :{BLACK}Show arrivals for ships
+
+STR_ARRIVALS_VEHICLES_TOOLTIP                                   :{BLACK}Show arrival vehicle names
+STR_ARRIVALS_GROUPS_TOOLTIP                                     :{BLACK}Show arrival vehicle groups
+STR_ARRIVALS_COMPANIES_TOOLTIP                                  :{BLACK}Show arrival companies
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
@@ -3990,6 +4080,7 @@ STR_TIMETABLE_STAY_FOR                                          :and stay for {S
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :and travel for {STRING1}
 STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}day{P "" s}
 STR_TIMETABLE_TICKS                                             :{COMMA}{NBSP}tick{P "" s}
+STR_TIMETABLE_MINUTES                                           :{COMMA}{NBSP}minute{P "" s}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}This timetable will take {STRING1} to complete
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}This timetable will take at least {STRING1} to complete (not all timetabled)
@@ -4002,6 +4093,9 @@ STR_TIMETABLE_STATUS_START_AT                                   :{BLACK}This tim
 
 STR_TIMETABLE_STARTING_DATE                                     :{BLACK}Start date
 STR_TIMETABLE_STARTING_DATE_TOOLTIP                             :{BLACK}Select a date as starting point of this timetable. Ctrl+Click sets the starting point of this timetable and distributes all vehicles sharing this order evenly based on their relative order, if the order is completely timetabled
+
+STR_TIMETABLE_STARTING_TIME                                     :{BLACK}Start time
+STR_TIMETABLE_STARTING_TIME_TOOLTIP                             :{BLACK}Select a time as starting point of this timetable. Ctrl+Click sets the starting point of this timetable and distributes all vehicles sharing this order evenly based on their relative order, if the order is completely timetabled
 
 STR_TIMETABLE_CHANGE_TIME                                       :{BLACK}Change Time
 STR_TIMETABLE_WAIT_TIME_TOOLTIP                                 :{BLACK}Change the amount of time that the highlighted order should take
@@ -4036,6 +4130,7 @@ STR_DATE_SET_DATE_TOOLTIP                                       :{BLACK}Use the 
 STR_DATE_DAY_TOOLTIP                                            :{BLACK}Select day
 STR_DATE_MONTH_TOOLTIP                                          :{BLACK}Select month
 STR_DATE_YEAR_TOOLTIP                                           :{BLACK}Select year
+STR_TIME_ENTER_TIME                                             :{BLACK}Enter time
 
 
 # AI debug window
@@ -4537,6 +4632,7 @@ STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... airc
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Can't timetable vehicle...
 STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS                       :{WHITE}Vehicles can only wait at stations
 STR_ERROR_TIMETABLE_NOT_STOPPING_HERE                           :{WHITE}This vehicle is not stopping at this station
+STR_ERROR_INVALID_TIMETABLE_START_TIME                          :{WHITE}Invalid timetable start time...
 
 # Sign related errors
 STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}... too many signs
@@ -4940,6 +5036,8 @@ STR_FORMAT_DATE_TINY                                            :{RAW_STRING}-{R
 STR_FORMAT_DATE_SHORT                                           :{STRING} {NUM}
 STR_FORMAT_DATE_LONG                                            :{STRING} {STRING} {NUM}
 STR_FORMAT_DATE_ISO                                             :{2:NUM}-{1:RAW_STRING}-{0:RAW_STRING}
+STR_FORMAT_DATE_CLOCK                                           :{STRING} {STRING} {NUM} / {RAW_STRING}:{RAW_STRING}
+STR_FORMAT_CLOCK                                                :{RAW_STRING}:{RAW_STRING}
 
 STR_FORMAT_BUOY_NAME                                            :{TOWN} Buoy
 STR_FORMAT_BUOY_NAME_SERIAL                                     :{TOWN} Buoy #{COMMA}
@@ -5005,6 +5103,8 @@ STR_JUST_DATE_TINY                                              :{DATE_TINY}
 STR_JUST_DATE_SHORT                                             :{DATE_SHORT}
 STR_JUST_DATE_LONG                                              :{DATE_LONG}
 STR_JUST_DATE_ISO                                               :{DATE_ISO}
+STR_JUST_DATE_TINY_OR_CLOCK                                     :{DATE_TINY_OR_CLOCK}
+STR_JUST_CLOCK                                                  :{CLOCK}
 STR_JUST_STRING                                                 :{STRING}
 STR_JUST_STRING_STRING                                          :{STRING}{STRING}
 STR_JUST_RAW_STRING                                             :{RAW_STRING}
@@ -5022,6 +5122,8 @@ STR_COMPANY_MONEY                                               :{WHITE}{CURRENC
 STR_BLACK_DATE_LONG                                             :{BLACK}{DATE_LONG}
 STR_WHITE_DATE_LONG                                             :{WHITE}{DATE_LONG}
 STR_SHORT_DATE                                                  :{WHITE}{DATE_TINY}
+STR_WHITE_DATE_OR_CLOCK                                         :{WHITE}{DATE_OR_CLOCK}
+STR_WHITE_DATE_CLOCK                                            :{WHITE}{DATE_CLOCK}
 STR_DATE_LONG_SMALL                                             :{TINY_FONT}{BLACK}{DATE_LONG}
 STR_TINY_GROUP                                                  :{TINY_FONT}{GROUP}
 STR_BLACK_INT                                                   :{BLACK}{NUM}

@@ -21,6 +21,9 @@ typedef int32  Year;  ///< Type for the year, note: 0 based, i.e. starts at the 
 typedef uint8  Month; ///< Type for the month, note: 0 based, i.e. 0 = January, 11 = December.
 typedef uint8  Day;   ///< Type for the day of the month, note: 1 based, first day of a month is 1.
 
+typedef uint8  Hour;   ///< Type for the hour of the day, note: 0 based, i.e. starts at the hour 0.
+typedef uint8  Minute; ///< Type for the minute of the hour, note: 0 based, i.e. starts at the minute 0.
+
 /**
  * 1 day is 74 ticks; _date_fract used to be uint16 and incremented by 885. On
  *                    an overflow the new day begun and 65535 / 885 = 74.
@@ -30,6 +33,12 @@ typedef uint8  Day;   ///< Type for the day of the month, note: 1 based, first d
 static const int DAY_TICKS         =  74; ///< ticks per day
 static const int DAYS_IN_YEAR      = 365; ///< days per year
 static const int DAYS_IN_LEAP_YEAR = 366; ///< sometimes, you need one day more...
+
+/**
+ * 1 minute is 74 ticks; i.e. the 24-hour clock moves one minute per day of game time.
+ */
+static const int HOURS_IN_DAY      = 24; ///< hours per day
+static const int MINUTES_IN_HOUR   = 60; ///< minutes per hour
 
 static const int STATION_RATING_TICKS     = 185; ///< cycle duration for updating station rating
 static const int STATION_ACCEPTANCE_TICKS = 250; ///< cycle duration for updating station acceptance
@@ -109,5 +118,13 @@ struct YearMonthDay {
 static const Year  INVALID_YEAR  = -1; ///< Representation of an invalid year
 static const Date  INVALID_DATE  = -1; ///< Representation of an invalid date
 static const Ticks INVALID_TICKS = -1; ///< Representation of an invalid number of ticks
+/**
+ * Data structure to convert between Date and pair (hour, and minute).
+ * @see ConvertDateToClock()
+ */
+struct HourMinute {
+        Hour   hour;   ///< Hour (0..23)
+        Minute minute; ///< Minute (0..59)
+};
 
 #endif /* DATE_TYPE_H */

@@ -53,6 +53,7 @@
 #include "linkgraph/linkgraph_base.h"
 #include "linkgraph/refresh.h"
 #include "widgets/station_widget.h"
+#include "departures.h"
 
 #include "table/strings.h"
 
@@ -3771,6 +3772,9 @@ CommandCost CmdRenameStation(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 		st->UpdateVirtCoord();
 		InvalidateWindowData(WC_STATION_LIST, st->owner, 1);
+                InvalidateWindowClassesData(WC_DEPARTURES, DIWD_STATION_NAME_CHANGED);
+                InvalidateWindowClassesData(WC_ARRIVALS, DIWD_STATION_NAME_CHANGED);
+
 	}
 
 	return CommandCost();

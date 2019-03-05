@@ -19,6 +19,7 @@ enum StatusBarInvalidate {
 	SBI_SHOW_TICKER,     ///< start scrolling news
 	SBI_SHOW_REMINDER,   ///< show a reminder (dot on the right side of the statusbar)
 	SBI_NEWS_DELETED,    ///< abort current news display (active news were deleted)
+	SBI_CLOCK_TOGGLED,   ///< clock setting toggled
 	SBI_END
 };
 

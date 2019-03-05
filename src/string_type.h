@@ -29,6 +29,7 @@ enum CharSetFilter {
 	CS_NUMERAL_SPACE,     ///< Only numbers and spaces
 	CS_ALPHA,             ///< Only alphabetic values
 	CS_HEXADECIMAL,       ///< Only hexadecimal characters
+	CS_TIME,              ///< Only numbers and colons
 };
 
 /** Type for wide characters, i.e. non-UTF8 encoded unicode characters. */

@@ -24,6 +24,7 @@
 #include "date_gui.h"
 #include "vehicle_gui.h"
 #include "settings_type.h"
+#include "error.h"
 
 #include "widgets/timetable_widget.h"
 
@@ -49,7 +50,10 @@ void SetTimetableParams(int param1, int param2, Ticks ticks)
 	if (_settings_client.gui.timetable_in_ticks) {
 		SetDParam(param1, STR_TIMETABLE_TICKS);
 		SetDParam(param2, ticks);
-	} else {
+        } else if (_settings_client.gui.use_clock) {
+                SetDParam(param1, STR_TIMETABLE_MINUTES);
+                SetDParam(param2, ticks / DAY_TICKS);
+        } else {
 		SetDParam(param1, STR_TIMETABLE_DAYS);
 		SetDParam(param2, ticks / DAY_TICKS);
 	}
@@ -149,13 +153,22 @@ static void ChangeTimetableStartCallback(const Window *w, Date date)
 
 
 struct TimetableWindow : Window {
+        /** Which query is currently being performed */
+        enum TimetableQuery {
+                TQ_NONE,
+                TQ_SPEED,
+                TQ_DURATION,
+                TQ_START,
+        };
+
 	int sel_index;
 	const Vehicle *vehicle; ///< Vehicle monitored by the window.
 	bool show_expected;     ///< Whether we show expected arrival or scheduled
 	uint deparr_time_width; ///< The width of the departure/arrival time
 	uint deparr_abbr_width; ///< The width of the departure/arrival abbreviation
 	Scrollbar *vscroll;
-	bool query_is_speed_query; ///< The currently open query window is a speed query and not a time query.
+        TimetableQuery current_query; ///< Which query is currently being performed
+        bool ctrl_was_pressed;  ///< Whether ctrl was pressed when the query began
 
 	TimetableWindow(WindowDesc *desc, WindowNumber window_number) :
 			Window(desc),
@@ -169,6 +182,7 @@ struct TimetableWindow : Window {
 		this->FinishInitNested(window_number);
 
 		this->owner = this->vehicle->owner;
+                this->current_query = TQ_NONE;
 	}
 
 	/**
@@ -189,12 +203,17 @@ struct TimetableWindow : Window {
 		return (travelling && v->lateness_counter < 0);
 	}
 
+        virtual void OnInit()
+        {
+                this->GetWidget<NWidgetCore>(WID_VT_START_DATE)->SetDataTip(STR_BLACK_STRING, _settings_client.gui.use_clock ? STR_TIMETABLE_STARTING_TIME_TOOLTIP : STR_TIMETABLE_STARTING_DATE_TOOLTIP);
+        }
+
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
 		switch (widget) {
 			case WID_VT_ARRIVAL_DEPARTURE_PANEL:
 				SetDParamMaxValue(0, MAX_YEAR * DAYS_IN_YEAR, 0, FS_SMALL);
-				this->deparr_time_width = GetStringBoundingBox(STR_JUST_DATE_TINY).width;
+                                this->deparr_time_width = GetStringBoundingBox(STR_JUST_DATE_TINY_OR_CLOCK).width;
 				this->deparr_abbr_width = max(GetStringBoundingBox(STR_TIMETABLE_ARRIVAL_ABBREVIATION).width, GetStringBoundingBox(STR_TIMETABLE_DEPARTURE_ABBREVIATION).width);
 				size->width = WD_FRAMERECT_LEFT + this->deparr_abbr_width + 10 + this->deparr_time_width + WD_FRAMERECT_RIGHT;
 				FALLTHROUGH;
@@ -246,6 +265,7 @@ struct TimetableWindow : Window {
 			case VIWD_MODIFY_ORDERS:
 				if (!gui_scope) break;
 				this->UpdateSelectionStates();
+                                this->GetWidget<NWidgetCore>(WID_VT_START_DATE)->SetDataTip(STR_BLACK_STRING, _settings_client.gui.use_clock ? STR_TIMETABLE_STARTING_TIME_TOOLTIP : STR_TIMETABLE_STARTING_DATE_TOOLTIP);
 				this->ReInit();
 				break;
 
@@ -346,6 +366,7 @@ struct TimetableWindow : Window {
 		switch (widget) {
 			case WID_VT_CAPTION: SetDParam(0, this->vehicle->index); break;
 			case WID_VT_EXPECTED: SetDParam(0, this->show_expected ? STR_TIMETABLE_EXPECTED : STR_TIMETABLE_SCHEDULED); break;
+                        case WID_VT_START_DATE: SetDParam(0, _settings_client.gui.use_clock ? STR_TIMETABLE_STARTING_TIME : STR_TIMETABLE_STARTING_DATE); break;
 		}
 	}
 
@@ -452,10 +473,10 @@ struct TimetableWindow : Window {
 							DrawString(abbr_left, abbr_right, y, STR_TIMETABLE_ARRIVAL_ABBREVIATION, i == selected ? TC_WHITE : TC_BLACK);
 							if (this->show_expected && i / 2 == earlyID) {
 								SetDParam(0, _date + arr_dep[i / 2].arrival / DAY_TICKS);
-								DrawString(time_left, time_right, y, STR_JUST_DATE_TINY, TC_GREEN);
+                                                                DrawString(time_left, time_right, y, STR_JUST_DATE_TINY_OR_CLOCK, TC_GREEN);
 							} else {
 								SetDParam(0, _date + (arr_dep[i / 2].arrival + offset) / DAY_TICKS);
-								DrawString(time_left, time_right, y, STR_JUST_DATE_TINY,
+                                                                DrawString(time_left, time_right, y, STR_JUST_DATE_TINY_OR_CLOCK,
 										show_late ? TC_RED : i == selected ? TC_WHITE : TC_BLACK);
 							}
 						}
@@ -463,7 +484,7 @@ struct TimetableWindow : Window {
 						if (arr_dep[i / 2].departure != INVALID_TICKS) {
 							DrawString(abbr_left, abbr_right, y, STR_TIMETABLE_DEPARTURE_ABBREVIATION, i == selected ? TC_WHITE : TC_BLACK);
 							SetDParam(0, _date + (arr_dep[i/2].departure + offset) / DAY_TICKS);
-							DrawString(time_left, time_right, y, STR_JUST_DATE_TINY,
+                                                        DrawString(time_left, time_right, y, STR_JUST_DATE_TINY_OR_CLOCK,
 									show_late ? TC_RED : i == selected ? TC_WHITE : TC_BLACK);
 						}
 					}
@@ -485,7 +506,7 @@ struct TimetableWindow : Window {
 				if (v->timetable_start != 0) {
 					/* We are running towards the first station so we can start the
 					 * timetable at the given time. */
-					SetDParam(0, STR_JUST_DATE_TINY);
+                                        SetDParam(0, STR_JUST_DATE_TINY_OR_CLOCK);
 					SetDParam(1, v->timetable_start);
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_TIMETABLE_STATUS_START_AT);
 				} else if (!HasBit(v->vehicle_flags, VF_TIMETABLE_STARTED)) {
@@ -531,7 +552,13 @@ struct TimetableWindow : Window {
 			}
 
 			case WID_VT_START_DATE: // Change the date that the timetable starts.
-				ShowSetDateWindow(this, v->index | (v->orders.list->IsCompleteTimetable() && _ctrl_pressed ? 1U << 20 : 0), _date, _cur_year, _cur_year + 15, ChangeTimetableStartCallback);
+                                if (_settings_client.gui.use_clock) {
+                                        this->current_query = TQ_START;
+                                        this->ctrl_was_pressed = _ctrl_pressed;
+                                        ShowQueryString(STR_EMPTY, STR_TIME_ENTER_TIME, 6, this, CS_TIME, QSF_LEN_IN_CHARS);
+                                } else {
+                                        ShowSetDateWindow(this, v->index | (v->orders.list->IsCompleteTimetable() && _ctrl_pressed ? 1U << 20 : 0), _date, _cur_year, _cur_year + 15, ChangeTimetableStartCallback);
+                                }
 				break;
 
 			case WID_VT_CHANGE_TIME: { // "Wait For" button.
@@ -553,7 +580,7 @@ struct TimetableWindow : Window {
 					}
 				}
 
-				this->query_is_speed_query = false;
+                                this->current_query = TQ_DURATION;
 				ShowQueryString(current, STR_TIMETABLE_CHANGE_TIME, 31, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
 				break;
 			}
@@ -573,7 +600,7 @@ struct TimetableWindow : Window {
 					}
 				}
 
-				this->query_is_speed_query = true;
+                                this->current_query = TQ_SPEED;
 				ShowQueryString(current, STR_TIMETABLE_CHANGE_SPEED, 31, this, CS_NUMERAL, QSF_NONE);
 				break;
 			}
@@ -614,16 +641,14 @@ struct TimetableWindow : Window {
 		this->SetDirty();
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+        inline void SpeedOrDurationQueryTextFinished(char *str, bool speed)
 	{
-		if (str == NULL) return;
-
 		const Vehicle *v = this->vehicle;
 
-		uint32 p1 = PackTimetableArgs(v, this->sel_index, this->query_is_speed_query);
+                uint32 p1 = PackTimetableArgs(v, this->sel_index, speed);
 
 		uint64 val = StrEmpty(str) ? 0 : strtoul(str, NULL, 10);
-		if (this->query_is_speed_query) {
+                if (speed) {
 			val = ConvertDisplaySpeedToKmhishSpeed(val);
 		} else {
 			if (!_settings_client.gui.timetable_in_ticks) val *= DAY_TICKS;
@@ -633,6 +658,85 @@ struct TimetableWindow : Window {
 
 		DoCommandP(0, p1, p2, CMD_CHANGE_TIMETABLE | CMD_MSG(STR_ERROR_CAN_T_TIMETABLE_VEHICLE));
 	}
+
+        inline void StartTimeQueryTextFinished(char *str)
+        {
+                bool valid = true;
+
+                size_t len = strlen(str);
+                assert(len <= 5);
+
+                uint8 digits[] = {0, 0, 0, 0};
+
+                uint8 colons = 0;
+                uint8 colon_pos = 0;
+                uint8 num_digits = 0;
+                for (uint8 pos = 0; pos < len; pos++) {
+                        if (str[pos] == ':') {
+                                colons++;
+                                if (colons > 1) {
+                                        valid = false;
+                                        break;
+                                }
+                                colon_pos = pos;
+                                continue;
+                        }
+
+                        assert(IsValidChar(str[pos], CS_NUMERAL));
+                        uint8 digit = str[pos] - '0';
+                        digits[pos - colons] = digit;
+                        num_digits++;
+                }
+
+                if (num_digits < 3 || num_digits > 4 || colon_pos != num_digits - 2) {
+                        valid = false;
+                }
+
+                HourMinute result;
+                result.hour = num_digits == 3 ? digits[0] : digits[0] * 10 + digits[1];
+                result.minute = digits[num_digits - 2] * 10 + digits[num_digits - 1];
+
+                if (result.hour >= HOURS_IN_DAY || result.minute >= MINUTES_IN_HOUR) {
+                        valid = false;
+                }
+
+                if (valid) {
+                        HourMinute current_clock;
+                        ConvertDateToClock(_date, &current_clock);
+                        Date base = (_date / (HOURS_IN_DAY * MINUTES_IN_HOUR)) * HOURS_IN_DAY * MINUTES_IN_HOUR;
+                        if (current_clock.hour > result.hour || (current_clock.hour == result.hour && current_clock.minute > result.minute)) {
+                                base += HOURS_IN_DAY * MINUTES_IN_HOUR;
+                        }
+                        base += result.hour * MINUTES_IN_HOUR;
+                        base += result.minute;
+                        const Vehicle *v = this->vehicle;
+                        DoCommandP(0, v->index | (v->orders.list->IsCompleteTimetable() && this->ctrl_was_pressed ? 1U << 20 : 0), base, CMD_SET_TIMETABLE_START | CMD_MSG(STR_ERROR_CAN_T_TIMETABLE_VEHICLE));
+                } else {
+                        ShowErrorMessage(STR_ERROR_INVALID_TIMETABLE_START_TIME, INVALID_STRING_ID, WL_INFO);
+                }
+        }
+
+        virtual void OnQueryTextFinished(char *str)
+        {
+                if (str == NULL) return;
+
+                switch (this->current_query) {
+                        case TQ_SPEED:
+                                SpeedOrDurationQueryTextFinished(str, true);
+                                break;
+
+                        case TQ_DURATION:
+                                SpeedOrDurationQueryTextFinished(str, false);
+                                break;
+
+                        case TQ_START:
+                                StartTimeQueryTextFinished(str);
+                                break;
+
+                        default:
+                                break;
+                }
+        }
 
 	virtual void OnResize()
 	{
@@ -678,7 +782,7 @@ static const NWidgetPart _nested_timetable_widgets[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_VT_CLEAR_SPEED), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_TIMETABLE_CLEAR_SPEED, STR_TIMETABLE_CLEAR_SPEED_TOOLTIP),
 			EndContainer(),
 			NWidget(NWID_VERTICAL, NC_EQUALSIZE),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_VT_START_DATE), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_TIMETABLE_STARTING_DATE, STR_TIMETABLE_STARTING_DATE_TOOLTIP),
+                                NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_VT_START_DATE), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_BLACK_STRING, STR_TIMETABLE_STARTING_DATE_TOOLTIP),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_VT_RESET_LATENESS), SetResize(1, 0), SetFill(1, 1), SetDataTip(STR_TIMETABLE_RESET_LATENESS, STR_TIMETABLE_RESET_LATENESS_TOOLTIP),
 			EndContainer(),
 			NWidget(NWID_VERTICAL, NC_EQUALSIZE),

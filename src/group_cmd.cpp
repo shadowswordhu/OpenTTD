@@ -21,6 +21,7 @@
 #include "company_func.h"
 #include "core/pool_func.hpp"
 #include "order_backup.h"
++#include "departures.h"
 
 #include "table/strings.h"
 
@@ -450,6 +451,8 @@ CommandCost CmdAlterGroup(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 			free(g->name);
 			/* Assign the new one */
 			g->name = reset ? NULL : stredup(text);
+                        InvalidateWindowClassesData(WC_DEPARTURES, DIWD_GROUP_NAME_CHANGED);
+                        InvalidateWindowClassesData(WC_ARRIVALS, DIWD_GROUP_NAME_CHANGED);
 		}
 	} else {
 		/* Set group parent */

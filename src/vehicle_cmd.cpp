@@ -31,6 +31,7 @@
 #include "ship.h"
 #include "newgrf.h"
 #include "company_base.h"
+#include "departures.h"
 
 #include "table/strings.h"
 
@@ -1043,6 +1044,8 @@ CommandCost CmdRenameVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 		v->name = reset ? NULL : stredup(text);
 		InvalidateWindowClassesData(GetWindowClassForVehicleType(v->type), 1);
 		MarkWholeScreenDirty();
+                InvalidateWindowClassesData(WC_DEPARTURES, DIWD_VEHICLE_NAME_CHANGED);
+                InvalidateWindowClassesData(WC_ARRIVALS, DIWD_VEHICLE_NAME_CHANGED);
 	}
 
 	return CommandCost();

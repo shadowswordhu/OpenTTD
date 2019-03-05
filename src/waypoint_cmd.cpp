@@ -29,6 +29,7 @@
 #include "company_base.h"
 #include "water.h"
 #include "company_gui.h"
+#include "departures.h"
 
 #include "table/strings.h"
 
@@ -421,6 +422,9 @@ CommandCost CmdRenameWaypoint(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 		wp->name = reset ? NULL : stredup(text);
 
 		wp->UpdateVirtCoord();
+                InvalidateWindowClassesData(WC_DEPARTURES, DIWD_WAYPOINT_NAME_CHANGED);
+                InvalidateWindowClassesData(WC_ARRIVALS, DIWD_WAYPOINT_NAME_CHANGED);
+
 	}
 	return CommandCost();
 }

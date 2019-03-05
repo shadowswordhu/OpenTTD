@@ -157,6 +157,18 @@ Date ConvertYMDToDate(Year year, Month month, Day day)
 	return DAYS_TILL(year) + days;
 }
 
+/**
+ * Converts a Date to an Hour and Minute.
+ * @param date the date to convert from
+ * @param clock the hour and minute to write to
+ */
+void ConvertDateToClock(Date date, HourMinute *clock)
+{
+        clock->minute = date % MINUTES_IN_HOUR;
+        clock->hour   = (date / MINUTES_IN_HOUR) % HOURS_IN_DAY;
+}
+
+
 /** Functions used by the IncreaseDate function */
 
 extern void EnginesDailyLoop();

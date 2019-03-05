@@ -438,6 +438,41 @@ static char *FormatTinyOrISODate(char *buff, Date date, StringID str, const char
 	return FormatString(buff, GetStringPtr(str), &tmp_params, last);
 }
 
+static char *FormatDateClockString(char *buff, Date date, const char *last, uint case_index)
+{
+        YearMonthDay ymd;
+        ConvertDateToYMD(date, &ymd);
+
+        HourMinute clock;
+        ConvertDateToClock(date, &clock);
+
+        char hour[3];
+        char minute[3];
+        /* We want to zero-pad the hours and minutes */
+        seprintf(hour,	 lastof(hour),   "%02i", clock.hour);
+        seprintf(minute, lastof(minute), "%02i", clock.minute);
+
+        int64 args[] = {ymd.day + STR_DAY_NUMBER_1ST - 1, STR_MONTH_ABBREV_JAN + ymd.month, ymd.year, (int64)(size_t)hour, (int64)(size_t)minute};
+        StringParameters tmp_params(args);
+        return FormatString(buff, GetStringPtr(STR_FORMAT_DATE_CLOCK), &tmp_params, last);
+}
+
+static char *FormatClockString(char *buff, Date date, const char *last, uint case_index)
+{
+        HourMinute clock;
+        ConvertDateToClock(date, &clock);
+
+        char hour[3];
+        char minute[3];
+        /* We want to zero-pad the hours and minutes */
+        seprintf(hour,   lastof(hour),   "%02i", clock.hour);
+        seprintf(minute, lastof(minute), "%02i", clock.minute);
+
+        int64 args[] = {(int64)(size_t)hour, (int64)(size_t)minute};
+        StringParameters tmp_params(args);
+        return FormatString(buff, GetStringPtr(STR_FORMAT_CLOCK), &tmp_params, last);
+}
+
 static char *FormatGenericCurrency(char *buff, const CurrencySpec *spec, Money number, bool compact, const char *last)
 {
 	/* We are going to make number absolute for printing, so
@@ -1201,6 +1236,24 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 			case SCC_DATE_ISO: // {DATE_ISO}
 				buff = FormatTinyOrISODate(buff, args->GetInt32(), STR_FORMAT_DATE_ISO, last);
 				break;
+
+                        case SCC_DATE_OR_CLOCK: // {DATE_OR_CLOCK}
+                                if (_settings_client.gui.use_clock) {
+                                        buff = FormatDateClockString(buff, args->GetInt32(SCC_DATE_OR_CLOCK), last, next_substr_case_index);
+                                } else {
+                                        buff = FormatYmdString(buff, args->GetInt32(SCC_DATE_LONG), last, next_substr_case_index);
+                                }
+                                next_substr_case_index = 0;
+                                break;
+
+                        case SCC_DATE_TINY_OR_CLOCK: // {DATE_TINY_OR_CLOCK}
+                                if (_settings_client.gui.use_clock) {
+                                        buff = FormatClockString(buff, args->GetInt32(SCC_CLOCK), last, next_substr_case_index);
+                                } else {
+                                        buff = FormatTinyOrISODate(buff, args->GetInt32(SCC_DATE_TINY), STR_FORMAT_DATE_TINY, last);
+                                }
+                                next_substr_case_index = 0;
+                                break;
 
 			case SCC_FORCE: { // {FORCE}
 				assert(_settings_game.locale.units_force < lengthof(_units_force));

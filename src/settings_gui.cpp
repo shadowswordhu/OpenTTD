@@ -1550,6 +1550,8 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.advanced_vehicle_list"));
 			interface->Add(new SettingEntry("gui.timetable_in_ticks"));
 			interface->Add(new SettingEntry("gui.timetable_arrival_departure"));
+                        interface->Add(new SettingEntry("gui.larger_departures_font"));
+                        interface->Add(new SettingEntry("gui.use_clock"));
 			interface->Add(new SettingEntry("gui.expenses_layout"));
 		}
 
